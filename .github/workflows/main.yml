@@ -1,0 +1,36 @@
+name: Deploy .NET API to MonsterASP
+
+on:
+  push:
+    branches:
+      - master   # or master if your default branch is master
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x  # or your version
+
+      - name: Restore dependencies
+        working-directory: ./dotnet-api
+        run: dotnet restore
+
+      - name: Build and Publish
+        working-directory: ./dotnet-api
+        run: dotnet publish -c Release -o ./publish
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dotnet-api/publish
+          server-dir: /site/wwwroot
