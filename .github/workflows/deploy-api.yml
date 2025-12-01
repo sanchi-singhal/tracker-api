@@ -29,11 +29,11 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
+          server: ${{ secrets.FTP_SERVER }}        # 155.254.246.42 OR all-in-one-tracker-api.somee.com
+          username: ${{ secrets.FTP_USERNAME }}    # sanchi
+          password: ${{ secrets.FTP_PASSWORD }}    # your Somee FTP password
           protocol: ftp
+          port: 21
           local-dir: ./publish/
-          server-dir: /
+          server-dir: /www.all-in-one-tracker-api.somee.com/
           log-level: verbose
