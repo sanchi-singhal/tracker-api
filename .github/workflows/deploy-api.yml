@@ -34,6 +34,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           protocol: ftp
-          local-dir: ./publish
+          local-dir: ./publish/
           server-dir: /
           log-level: verbose
