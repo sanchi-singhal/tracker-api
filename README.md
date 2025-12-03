@@ -41,7 +41,7 @@ The API will be available at:
 
 ## CORS Configuration
 
-The API is configured to allow requests from the Angular application running on `http://localhost:4200`. CORS settings can be modified in `Program.cs`.
+Allowed origins are managed via the `Cors:AllowedOrigins` array in `appsettings.json` (production) and `appsettings.Development.json` (local overrides). The production file is already set to allow the deployed UI at `https://all-in-one-tracker-ui.vercel.app`, while the development file allows `http://localhost:4200`. Update these values if the UI domains change. `Program.cs` reads the configuration at startup and applies it to the CORS policy.
 
 ## Project Structure
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,16 +10,31 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS to allow Angular app to call the API
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>()?
+    .Where(origin => !string.IsNullOrWhiteSpace(origin))
+    .ToArray() ?? Array.Empty<string>();
+
+const string CorsPolicyName = "ConfiguredCors";
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp",
-        policy =>
+    options.AddPolicy(CorsPolicyName, policy =>
+    {
+        if (allowedOrigins.Length == 0 || allowedOrigins.Contains("*"))
         {
-            policy.WithOrigins("http://localhost:4200")
+            policy.AllowAnyOrigin()
                   .AllowAnyHeader()
                   .AllowAnyMethod();
-        });
+        }
+        else
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        }
+    });
 });
 
 var app = builder.Build();
@@ -30,7 +46,7 @@ Directory.CreateDirectory(logDir);
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors("AllowAngularApp");
+app.UseCors(CorsPolicyName);
 
 app.UseAuthorization();
 
